@@ -1,0 +1,95 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "sample-gallery",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-10-11",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "workers_dev": true,
+  "assets": {
+    "directory": "./build",
+    "binding": "ASSETS",
+    "run_worker_first": true
+  },
+  "vars": {
+    "SAMPLE_MODE": "local",
+    "CORRIDORA_TARGET": "own",
+    "CORRIDORA_OTLP_ENDPOINT": "",
+    "CORRIDORA_RUM_SCRIPT_URL": "https://rum.corridora.com/corridora-rum.js",
+    "CORRIDORA_RUM_KEY": "",
+    "OTEL_SERVICE_NAME": "sample-gallery-api",
+    "OTEL_SERVICE_NAMESPACE": "corridora-samples.gallery",
+    "DEPLOYMENT_ENVIRONMENT": "development",
+    "SERVICE_VERSION": "local",
+    "DEMO_DAILY_START_UTC": "13:00",
+    "DEMO_WINDOW_SECONDS": "600",
+    "RECOMMENDER_URL": "",
+    "DOWNSTREAM_AUTH_TOKEN": "",
+    "TRACKER_SIMULATOR_URL": "",
+    "ENABLE_PROVIDER_FORWARDING": "false",
+    "ENABLE_SYNTHETICS": "false",
+    "CLOUDFLARE_ACCOUNT_ID": "",
+    "PUBLIC_ORIGIN": ""
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sample-gallery-catalog",
+      "database_id": "00000000-0000-0000-0000-000000000001",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "sample-gallery-images"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "CONFIG",
+      "id": "00000000000000000000000000000001"
+    }
+  ],
+  "queues": {
+    "producers": [
+      {
+        "binding": "THUMBNAILS",
+        "queue": "sample-gallery-thumbnails"
+      }
+    ],
+    "consumers": [
+      {
+        "queue": "sample-gallery-thumbnails",
+        "max_batch_size": 1,
+        "max_batch_timeout": 1,
+        "max_retries": 2,
+        "retry_delay": 3,
+        "dead_letter_queue": "sample-gallery-dead"
+      }
+    ]
+  },
+  "triggers": {
+    "crons": [
+      "0 13 * * *",
+      "15 13 * * *",
+      "30 13 * * *"
+    ]
+  },
+  "limits": {
+    "cpu_ms": 50
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": false
+    },
+    "traces": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "persist": false
+    }
+  }
+}

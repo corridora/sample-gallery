@@ -1,0 +1,14 @@
+node_modules/
+build/
+.svelte-kit/
+.wrangler/
+.sample/
+.dev.vars*
+.env
+.env.*
+!.env.example
+playwright-report/
+test-results/
+__pycache__/
+*.pyc
+worker-configuration.d.ts

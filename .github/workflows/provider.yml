@@ -1,0 +1,21 @@
+name: Native provider metrics
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '7,22,37,52 * * * *'
+permissions:
+  contents: read
+jobs:
+  export:
+    if: vars.ENABLE_PROVIDER_FORWARDING == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    env:
+      CLOUDFLARE_ANALYTICS_TOKEN: ${{ secrets.CLOUDFLARE_ANALYTICS_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+      RESOURCE_PREFIX: ${{ vars.RESOURCE_PREFIX }}
+      CORRIDORA_OTLP_ENDPOINT: ${{ vars.CORRIDORA_OTLP_ENDPOINT }}
+      CORRIDORA_INGEST_KEY: ${{ secrets.CORRIDORA_INGEST_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/provider_metrics.py

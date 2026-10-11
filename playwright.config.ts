@@ -1,0 +1,3 @@
+import { defineConfig } from '@playwright/test';
+const hosted=!!process.env.SAMPLE_BASE_URL;
+export default defineConfig({testDir:'tests/browser',workers:1,timeout:90000,use:{baseURL:process.env.SAMPLE_BASE_URL||'http://localhost:4101',headless:true,launchOptions:{executablePath:process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH||undefined}},webServer:hosted?undefined:[{command:'npm run capture',url:'http://127.0.0.1:4411/healthz',reuseExistingServer:false,timeout:30000},{command:'python3 scripts/test-server.py',url:'http://localhost:4101/healthz',reuseExistingServer:false,timeout:120000}],reporter:'list'});

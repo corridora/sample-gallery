@@ -1,0 +1,29 @@
+name: Daily browser incident and watchdog
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '2 13 * * *'
+    - cron: '30 13 * * *'
+    - cron: '45 20 * * *'
+permissions:
+  contents: read
+concurrency:
+  group: gallery-daily
+  cancel-in-progress: false
+jobs:
+  incident:
+    if: vars.ENABLE_SYNTHETICS == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SAMPLE_BASE_URL: ${{ vars.SAMPLE_BASE_URL }}
+      DEMO_CONTROL_TOKEN: ${{ secrets.DEMO_CONTROL_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: python3 scripts/watchdog.py
